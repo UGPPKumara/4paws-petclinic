@@ -47,13 +47,13 @@ import LoginPage from './pages/LoginPage';
 // --- Firebase Configuration ---
 const firebaseConfig = 
 {
-  apiKey: "AIzaSyDe0t1zfi2PD4ZJKALgF4kz3E5foW0PI3w",
-  authDomain: "paws-5f24e.firebaseapp.com",
-  projectId: "paws-5f24e",
-  storageBucket: "paws-5f24e.firebasestorage.app",
-  messagingSenderId: "123105192704",
-  appId: "1:123105192704:web:180e235255cc9ec680e1e5",
-  measurementId: "G-NNM76SHRFR"
+    apiKey: "AIzaSyB71laYmoZ1F46hEeJdXoY5M1dOM9izLrs",
+    authDomain: "paws-petregistration.firebaseapp.com",
+    projectId: "paws-petregistration",
+    storageBucket: "paws-petregistration.firebasestorage.app",
+    messagingSenderId: "98641695099",
+    appId: "1:98641695099:web:efa12343be7a6e0a94adde",
+    measurementId: "G-JBJBFZWB6X"
 };
 const appId = 'default-pet-clinic';
 
@@ -283,6 +283,11 @@ export default function App() {
     };
 
     const navigateTo = (newView, data = null) => {
+
+        if (auth.currentUser) {
+        console.log("Current Logged-In User ID:", auth.currentUser.uid);
+    }
+
         setView(newView);
         setError('');
         
@@ -336,7 +341,7 @@ export default function App() {
             case 'editOwner':
                 return <EditOwnerPage owner={selectedOwner} db={db} setView={navigateTo} setError={setError} />;
             case 'ownerDetails':
-                 return <OwnerDetailsPage owner={selectedOwner} pets={ownerPets} handleSelectPet={navigateTo} navigateTo={navigateTo} db={db} />;
+                 return <OwnerDetailsPage owner={selectedOwner} pets={ownerPets} handleSelectPet={navigateTo} navigateTo={navigateTo} setError={setError} db={db} />;
             case 'addPet':
                 return <AddPetPage owner={selectedOwner} db={db} userId={userId} setView={navigateTo} setError={setError} />;
             case 'editPet':

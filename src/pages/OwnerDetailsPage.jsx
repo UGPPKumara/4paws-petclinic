@@ -5,7 +5,7 @@ import InputField from '../components/InputField';
 import { User, PawPrint, PlusCircle, Edit, Trash2 } from 'lucide-react';
 import BackButton from '../components/BackButton';
 
-export default function OwnerDetailsPage({ owner, pets, handleSelectPet, navigateTo, db }) {
+export default function OwnerDetailsPage({ owner, pets, handleSelectPet, navigateTo, db, setError  }) {
     const [petToDelete, setPetToDelete] = useState(null);
     const [petSearchTerm, setPetSearchTerm] = useState('');
 
@@ -19,26 +19,37 @@ export default function OwnerDetailsPage({ owner, pets, handleSelectPet, navigat
     }, [pets, petSearchTerm]);
     
     const handleDeletePet = async (petId) => {
-        if (!petId) return;
+    if (!petId) return;
 
-        const batch = writeBatch(db);
-        const petRef = doc(db, `artifacts/default-pet-clinic/public/data/pets`, petId);
-        batch.delete(petRef);
+    const batch = writeBatch(db);
+    const petRef = doc(db, `artifacts/default-pet-clinic/public/data/pets`, petId);
+    batch.delete(petRef);
 
-        const recordsQuery = query(collection(db, `artifacts/default-pet-clinic/public/data/medicalRecords`), where('petId', '==', petId));
-        const appointmentsQuery = query(collection(db, `artifacts/default-pet-clinic/public/data/appointments`), where('petId', '==', petId));
-        
-        try {
-            const [recordsSnapshot, appointmentsSnapshot] = await Promise.all([getDocs(recordsQuery), getDocs(appointmentsQuery)]);
-            recordsSnapshot.forEach(recordDoc => batch.delete(recordDoc.ref));
-            appointmentsSnapshot.forEach(appointmentDoc => batch.delete(appointmentDoc.ref));
-            await batch.commit();
-        } catch(e) {
-            console.error("Error deleting pet and related data: ", e);
-        } finally {
-            setPetToDelete(null);
-        }
-    };
+    const recordsQuery = query(collection(db, `artifacts/default-pet-clinic/public/data/medicalRecords`), where('petId', '==', petId));
+    const appointmentsQuery = query(collection(db, `artifacts/default-pet-clinic/public/data/appointments`), where('petId', '==', petId));
+
+    try {
+        const [recordsSnapshot, appointmentsSnapshot] = await Promise.all([
+            getDocs(recordsQuery),
+            getDocs(appointmentsQuery)
+        ]);
+
+        recordsSnapshot.forEach(recordDoc => {
+            batch.delete(recordDoc.ref);
+        });
+
+        appointmentsSnapshot.forEach(appointmentDoc => {
+            batch.delete(appointmentDoc.ref);
+        });
+
+        await batch.commit();
+    } catch (e) {
+        console.error("Error deleting pet and related data: ", e);
+        setError("Failed to delete pet and associated data. Please try again.");
+    } finally {
+        setPetToDelete(null);
+    }
+};
 
     if (!owner) return <div className="text-center p-8">Owner not found. Please go back to the owners list.</div>;
 
