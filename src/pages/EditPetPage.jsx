@@ -10,8 +10,16 @@ export default function EditPetPage({ pet, owner, db, setView, setError }) {
     const [breed, setBreed] = useState(pet.breed || '');
     const [age, setAge] = useState(pet.age || '');
     const [gender, setGender] = useState(pet.gender || 'Male');
+    const [imageFile, setImageFile] = useState(null); // Add state for the new image file
     const [imageName, setImageName] = useState(pet.imageUrl ? 'Current Image' : '');
     const [isSubmitting, setIsSubmitting] = useState(false);
+
+    const handleFileChange = (e) => {
+        if (e.target.files && e.target.files[0]) {
+            setImageFile(e.target.files[0]);
+            setImageName(e.target.files[0].name);
+        }
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -19,8 +27,28 @@ export default function EditPetPage({ pet, owner, db, setView, setError }) {
         setIsSubmitting(true);
         setError('');
         try {
+            let imageUrl = pet.imageUrl; // Start with the existing image URL
+
+            // If a new image file is selected, upload it to Cloudinary
+            if (imageFile) {
+                const formData = new FormData();
+                formData.append('file', imageFile);
+                formData.append('upload_preset', 'pet-clinic'); // Replace with your preset name
+
+                const uploadResponse = await fetch(`https://api.cloudinary.com/v1_1/prasanna-cloud/image/upload`, { // Replace with your cloud name
+                    method: 'POST',
+                    body: formData,
+                });
+
+                const uploadData = await uploadResponse.json();
+                if (uploadData.secure_url) {
+                    imageUrl = uploadData.secure_url;
+                } else {
+                    throw new Error('Cloudinary upload failed.');
+                }
+            }
+
             const petRef = doc(db, `artifacts/default-pet-clinic/public/data/pets`, pet.id);
-            const imageUrl = `https://placehold.co/400x400/06b6d4/ffffff?text=${name.charAt(0)}`;
             await updateDoc(petRef, { name, species, breed, age, gender, imageUrl });
             setView('ownerDetails', owner);
         } catch (err) {
@@ -55,11 +83,10 @@ export default function EditPetPage({ pet, owner, db, setView, setError }) {
                             <div className="flex text-sm text-gray-600">
                                 <label htmlFor="pet-image-upload-edit" className="relative cursor-pointer bg-white rounded-md font-medium text-cyan-600 hover:text-cyan-500 focus-within:outline-none">
                                     <span>Upload a file</span>
-                                    <input id="pet-image-upload-edit" name="pet-image-upload" type="file" className="sr-only" onChange={(e) => setImageName(e.target.files[0]?.name)} accept="image/*" />
+                                    <input id="pet-image-upload-edit" name="pet-image-upload" type="file" className="sr-only" onChange={handleFileChange} accept="image/*" />
                                 </label>
                             </div>
                             <p className="text-xs text-gray-500">{imageName ? `Selected: ${imageName}` : 'PNG, JPG up to 10MB'}</p>
-                            <p className="text-xs text-yellow-600">(Note: File upload is simulated.)</p>
                         </div>
                     </div>
                 </div>

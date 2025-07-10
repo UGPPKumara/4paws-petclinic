@@ -43,11 +43,11 @@ export default function MedicalRecordsList({ records, onEdit, onDelete }) {
                                         {record.followUpDate ? new Date(record.followUpDate).toLocaleDateString() : 'None'}
                                     </td>
                                      <td className="px-4 py-4">
-                                        {record.fileName ? (
-                                            <button className="flex items-center text-cyan-600 hover:text-cyan-800" title="Download is not available in this environment">
+                                        {record.fileUrl && record.fileName ? (
+                                            <a href={record.fileUrl} target="_blank" rel="noopener noreferrer" download={record.fileName} className="flex items-center text-cyan-600 hover:text-cyan-800">
                                                 <Download size={16} className="mr-1" />
                                                 <span className="truncate max-w-28">{record.fileName}</span>
-                                            </button>
+                                            </a>
                                         ) : 'None'}
                                     </td>
                                     <td className="px-4 py-4 text-right">

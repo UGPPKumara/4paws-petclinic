@@ -16,6 +16,7 @@ export default function EditMedicalRecordPage({ record, pet, owner, db, userId, 
     const [notes, setNotes] = useState(record.notes || '');
     const [payment, setPayment] = useState(record.payment || '');
     const [fileName, setFileName] = useState(record.fileName || '');
+    const [newFile, setNewFile] = useState(null); // State for the new file
     const [isSubmitting, setIsSubmitting] = useState(false);
 
      const diagnosticOptions = [
@@ -24,7 +25,8 @@ export default function EditMedicalRecordPage({ record, pet, owner, db, userId, 
     
     const handleFileChange = (e) => {
         if (e.target.files && e.target.files[0]) {
-            setFileName(e.target.files[0].name);
+            setNewFile(e.target.files[0]); // Set the new file object
+            setFileName(e.target.files[0].name); // Update the display name
         }
     };
     
@@ -34,19 +36,35 @@ export default function EditMedicalRecordPage({ record, pet, owner, db, userId, 
         setError('');
         
         try {
+            let updatedFileUrl = record.fileUrl; 
+            let updatedFileName = fileName;
+
+            if (newFile) {
+                const formData = new FormData();
+                formData.append('file', newFile);
+                // 👇 1. REPLACE with your actual upload preset name
+                formData.append('upload_preset', 'pet-clinic'); 
+
+                // 👇 2. REPLACE with your actual Cloudinary Cloud Name
+                const uploadResponse = await fetch(`https://api.cloudinary.com/v1_1/prasanna-cloud/auto/upload`, {
+                    method: 'POST',
+                    body: formData,
+                });
+                const uploadData = await uploadResponse.json();
+                if (uploadData.secure_url) {
+                    updatedFileUrl = uploadData.secure_url;
+                    updatedFileName = newFile.name;
+                } else {
+                    // This is the error you are seeing
+                    throw new Error('Cloudinary upload failed.'); 
+                }
+            }
+
             const recordRef = doc(db, `artifacts/default-pet-clinic/public/data/medicalRecords`, record.id);
             const recordData = {
-                ...record, // preserve existing data
-                recordDate: new Date(recordDate),
-                diagnosticTest,
-                testResult,
-                diagnosis,
-                treatment,
-                prescribedMedicine,
-                notes,
-                payment: Number(payment) || 0,
-                followUpDate: followUpDate ? new Date(`${followUpDate}T${followUpTime || '00:00'}`) : null,
-                fileName,
+                //...
+                fileUrl: updatedFileUrl,
+                fileName: updatedFileName,
             };
             await updateDoc(recordRef, recordData);
             setView('petDetails', pet);
@@ -97,7 +115,6 @@ export default function EditMedicalRecordPage({ record, pet, owner, db, userId, 
                                     </label>
                                 </div>
                                 <p className="text-xs text-gray-500">{fileName ? `Selected: ${fileName}` : 'PDF, PNG, JPG up to 10MB'}</p>
-                                <p className="text-xs text-yellow-600">(Note: File upload is simulated and not stored.)</p>
                             </div>
                         </div>
                     </div>

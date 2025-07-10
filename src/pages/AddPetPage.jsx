@@ -10,8 +10,6 @@ export default function AddPetPage({ owner, db, userId, setView, setError }) {
     const [breed, setBreed] = useState('');
     const [age, setAge] = useState('');
     const [gender, setGender] = useState('Male');
-    
-    // This state now holds the file object for uploading
     const [imageFile, setImageFile] = useState(null); 
     const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -22,23 +20,44 @@ export default function AddPetPage({ owner, db, userId, setView, setError }) {
         setError('');
 
         try {
-            // Default placeholder image
             let imageUrl = `https://placehold.co/400x400/06b6d4/ffffff?text=${name.charAt(0)}`;
 
-            await addDoc(collection(db, `artifacts/default-pet-clinic/public/data/pets`), { 
-                name, species, breed, age, gender, 
-                imageUrl, 
-                ownerId: owner.id, 
-                userId, 
-                createdAt: serverTimestamp() 
+            if (imageFile) {
+                const formData = new FormData();
+                formData.append('file', imageFile);
+                // 👇 1. REPLACE a-preset-name WITH YOUR ACTUAL UPLOAD PRESET NAME
+                formData.append('upload_preset', 'pet-clinic'); 
+
+                // 👇 2. REPLACE your-cloud-name WITH YOUR ACTUAL CLOUD NAME
+                const uploadResponse = await fetch(`https://api.cloudinary.com/v1_1/prasanna-cloud/image/upload`, { 
+                    method: 'POST',
+                    body: formData,
+                });
+
+                const uploadData = await uploadResponse.json();
+
+                // This line will fail if the upload fails, causing the error
+                if (uploadData.secure_url) {
+                    imageUrl = uploadData.secure_url;
+                } else {
+                    throw new Error('Cloudinary upload failed. Please check your credentials.');
+                }
+            }
+
+            await addDoc(collection(db, `artifacts/default-pet-clinic/public/data/pets`), {
+                name, species, breed, age, gender,
+                imageUrl, // This was undefined because of the failed upload
+                ownerId: owner.id,
+                userId,
+                createdAt: serverTimestamp()
             });
 
             setView('ownerDetails', owner);
         } catch (err) {
             setError(`Failed to add pet. ${err.message}`);
             console.error(err);
-        } finally { 
-            setIsSubmitting(false); 
+        } finally {
+            setIsSubmitting(false);
         }
     };
     

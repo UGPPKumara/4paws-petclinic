@@ -16,7 +16,7 @@ export default function AddMedicalRecordPage({ pet, owner, db, userId, setError,
     const [followUpTime, setFollowUpTime] = useState('');
     const [notes, setNotes] = useState('');
     const [payment, setPayment] = useState('');
-    const [fileName, setFileName] = useState('');
+    const [file, setFile] = useState(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const diagnosticOptions = [
@@ -25,19 +25,39 @@ export default function AddMedicalRecordPage({ pet, owner, db, userId, setError,
     
     const handleFileChange = (e) => {
         if (e.target.files && e.target.files[0]) {
-            setFileName(e.target.files[0].name);
+            setFile(e.target.files[0]);
         }
     };
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         setIsSubmitting(true);
         setError('');
+
+        // --- Start of temporary debugging code ---
         
         try {
-            const batch = writeBatch(db);
-            
-            const recordRef = doc(collection(db, `artifacts/default-pet-clinic/public/data/medicalRecords`));
+            let fileUrl = '';
+            let fileName = '';
+
+            // 1. Handle the file upload to Cloudinary (this part is working)
+            if (file) {
+                const formData = new FormData();
+                formData.append('file', file);
+                formData.append('upload_preset', 'pet-clinic'); // Replace with your preset name
+                const uploadResponse = await fetch(`https://api.cloudinary.com/v1_1/prasanna-cloud/auto/upload`, { // Replace with your cloud name
+                    method: 'POST',
+                    body: formData,
+                });
+                const uploadData = await uploadResponse.json();
+                if (uploadData.secure_url) {
+                    fileUrl = uploadData.secure_url;
+                    fileName = file.name;
+                } else {
+                    throw new Error('Cloudinary upload failed.');
+                }
+            }
+
+            // 2. Create the data object for the medical record
             const recordData = {
                 petId: pet.id,
                 userId,
@@ -50,15 +70,20 @@ export default function AddMedicalRecordPage({ pet, owner, db, userId, setError,
                 notes,
                 payment: Number(payment) || 0,
                 followUpDate: followUpDate ? new Date(`${followUpDate}T${followUpTime || '00:00'}`) : null,
+                fileUrl,
                 fileName,
                 createdAt: serverTimestamp()
             };
-            batch.set(recordRef, recordData);
 
+            // 3. Try to save ONLY the medical record first
+            console.log("Attempting to save medical record...");
+            await addDoc(collection(db, `artifacts/default-pet-clinic/public/data/medicalRecords`), recordData);
+            console.log("Medical record saved successfully!");
+
+            // 4. If the record saves, then try to save the follow-up appointment
             if (followUpDate && followUpTime) {
-                const appointmentRef = doc(collection(db, `artifacts/default-pet-clinic/public/data/appointments`));
                 const followUpDateTime = new Date(`${followUpDate}T${followUpTime}`);
-                batch.set(appointmentRef, {
+                const appointmentData = {
                     ownerId: owner.id,
                     petId: pet.id,
                     dateTime: followUpDateTime,
@@ -66,20 +91,23 @@ export default function AddMedicalRecordPage({ pet, owner, db, userId, setError,
                     status: 'Scheduled',
                     userId,
                     createdAt: serverTimestamp()
-                });
+                };
+                console.log("Attempting to save follow-up appointment...");
+                await addDoc(collection(db, `artifacts/default-pet-clinic/public/data/appointments`), appointmentData);
+                console.log("Appointment saved successfully!");
             }
 
-            await batch.commit();
             setView('petDetails', pet);
 
         } catch (err) {
-            console.error("Failed to add medical record:", err);
+            console.error("Error during submit:", err); // This will now give us a more specific error
             setError('Failed to add record. Check console for details.');
         } finally {
             setIsSubmitting(false);
         }
+        
+        // --- End of temporary debugging code ---
     };
-    
     return (
         <FormWrapper title={`Add Record for ${pet.name}`} onBack={() => setView('petDetails', pet)}>
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -118,8 +146,7 @@ export default function AddMedicalRecordPage({ pet, owner, db, userId, setError,
                                     </label>
                                     <p className="pl-1">or drag and drop</p>
                                 </div>
-                                <p className="text-xs text-gray-500">{fileName ? `Selected: ${fileName}` : 'PDF, PNG, JPG up to 10MB'}</p>
-                                <p className="text-xs text-yellow-600">(Note: File upload is simulated and not stored.)</p>
+                                <p className="text-xs text-gray-500">{file ? `Selected: ${file.name}` : 'PDF, PNG, JPG up to 10MB'}</p>
                             </div>
                         </div>
                     </div>
