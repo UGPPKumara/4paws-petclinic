@@ -241,45 +241,72 @@ export default function App() {
             return doc.autoTable.previous.finalY + 15;
         };
 
-        doc.setFontSize(22);
-        doc.text("4Paws Pet Clinic - Data Backup", 14, 20);
-        doc.setFontSize(10);
-        doc.text(`Generated on: ${new Date().toLocaleString()}`, 14, 26);
-        
-        let currentY = 40;
+        const addPageContent = (withLogo) => {
+            const pageWidth = doc.internal.pageSize.getWidth();
+            const logoWidth = 40;
+            const logoHeight = 15;
+            const x = pageWidth - 14 - logoWidth;
+            const y = 12;
+            
+            if(withLogo) {
+                const logo = new Image();
+                logo.src = '/logo1.png';
+                doc.addImage(logo, 'PNG', x, y, logoWidth, logoHeight);
+            }
 
-        if(options.includeOwners){
-            const ownerData = owners.map((o, index) => [index + 1, `${o.firstName} ${o.lastName}`, o.email, o.phone, o.address]);
-            currentY = addSection("Owners", ["#", "Name", "Email", "Phone", "Address"], ownerData, currentY);
-        }
-        
-        if(options.includePets){
-            const petData = allPets.map((p, index) => {
-                const owner = owners.find(o => o.id === p.ownerId);
-                return [index + 1, p.name, p.species, p.breed, p.age, p.gender, owner ? `${owner.firstName} ${owner.lastName}` : "N/A"];
-            });
-            currentY = addSection("Pets", ["#", "Name", "Species", "Breed", "Age", "Gender", "Owner"], petData, currentY);
-        }
-        
-        if(options.includeAppointments){
-            const appointmentData = allAppointments.map((a, index) => {
-                const owner = owners.find(o => o.id === a.ownerId);
-                const pet = allPets.find(p => p.id === a.petId);
-                return [index + 1, formatDate(a.dateTime), a.dateTime ? new Date(a.dateTime).toLocaleTimeString() : 'N/A', pet?.name || 'N/A', owner?.firstName || 'N/A', a.reason, a.status]
-            })
-            currentY = addSection("Appointments", ["#", "Date", "Time", "Pet", "Owner", "Reason", "Status"], appointmentData, currentY);
-        }
+            doc.setFontSize(22);
+            doc.text("4Paws Pet Clinic - Data Backup", 14, 20);
+            doc.setFontSize(10);
+            doc.text(`Generated on: ${new Date().toLocaleString()}`, 14, 26);
+            
+            let currentY = 40;
 
-        if(options.includeMedicalRecords){
-             const recordData = allMedicalRecords.map((r, index) => {
-                const pet = allPets.find(p => p.id === r.petId);
-                return [index + 1, pet?.name || 'N/A', formatDate(r.recordDate), r.diagnosticTest || 'N/A', r.testResult || r.otherTestNotes || 'N/A', `$${(r.payment || 0).toFixed(2)}`, formatDate(r.followUpDate)];
-            });
-            addSection("Medical Records", ["#", "Pet", "Date", "Test", "Result", "Payment", "Follow-up"], recordData, currentY);
-        }
+            if(options.includeOwners){
+                const ownerData = owners.map((o, index) => [index + 1, `${o.firstName} ${o.lastName}`, o.email, o.phone, o.address]);
+                currentY = addSection("Owners", ["#", "Name", "Email", "Phone", "Address"], ownerData, currentY);
+            }
+            
+            if(options.includePets){
+                const petData = allPets.map((p, index) => {
+                    const owner = owners.find(o => o.id === p.ownerId);
+                    return [index + 1, p.name, p.species, p.breed, p.age, p.gender, owner ? `${owner.firstName} ${owner.lastName}` : "N/A"];
+                });
+                currentY = addSection("Pets", ["#", "Name", "Species", "Breed", "Age", "Gender", "Owner"], petData, currentY);
+            }
+            
+            if(options.includeAppointments){
+                const appointmentData = allAppointments.map((a, index) => {
+                    const owner = owners.find(o => o.id === a.ownerId);
+                    const pet = allPets.find(p => p.id === a.petId);
+                    return [index + 1, formatDate(a.dateTime), a.dateTime ? new Date(a.dateTime).toLocaleTimeString() : 'N/A', pet?.name || 'N/A', owner?.firstName || 'N/A', a.reason, a.status]
+                })
+                currentY = addSection("Appointments", ["#", "Date", "Time", "Pet", "Owner", "Reason", "Status"], appointmentData, currentY);
+            }
 
-        doc.save(`4paws-clinic-backup-${new Date().toISOString().split('T')[0]}.pdf`);
-        setIsGeneratingPdf(false);
+            if(options.includeMedicalRecords){
+                 const recordData = allMedicalRecords.map((r, index) => {
+                    const pet = allPets.find(p => p.id === r.petId);
+                    return [index + 1, pet?.name || 'N/A', formatDate(r.recordDate), r.diagnosticTest || 'N/A', r.testResult || r.otherTestNotes || 'N/A', `$${(r.payment || 0).toFixed(2)}`, formatDate(r.followUpDate)];
+                });
+                addSection("Medical Records", ["#", "Pet", "Date", "Test", "Result", "Payment", "Follow-up"], recordData, currentY);
+            }
+
+            doc.save(`4paws-clinic-backup-${new Date().toISOString().split('T')[0]}.pdf`);
+            setIsGeneratingPdf(false);
+        };
+
+        try {
+            const logo = new Image();
+            logo.src = '/logo1.png';
+            logo.onload = () => {
+                addPageContent(true);
+            };
+            logo.onerror = () => {
+                addPageContent(false);
+            }
+        } catch(e) {
+            addPageContent(false);
+        }
     };
 
     const navigateTo = (newView, data = null) => {

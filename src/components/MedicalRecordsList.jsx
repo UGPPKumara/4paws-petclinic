@@ -12,7 +12,8 @@ export default function MedicalRecordsList({ records, onEdit, onDelete }) {
                          <thead className="text-xs text-gray-700 uppercase bg-gray-50">
                             <tr>
                                 <th className="px-4 py-3">Date</th>
-                                <th className="px-4 py-3">Details</th>
+                                <th className="px-4 py-3">Diagnosis & Treatment</th>
+                                <th className="px-4 py-3">Prescription & Notes</th>
                                 <th className="px-4 py-3">Payment</th>
                                 <th className="px-4 py-3">Follow-up</th>
                                 <th className="px-4 py-3">File</th>
@@ -27,7 +28,11 @@ export default function MedicalRecordsList({ records, onEdit, onDelete }) {
                                     </td>
                                     <td className="px-4 py-4 max-w-sm">
                                         <p><strong>Test:</strong> {record.diagnosticTest || 'N/A'}</p>
-                                        <p className="truncate"><strong>Result:</strong> {record.testResult || record.otherTestNotes || 'N/A'}</p>
+                                        <p className="truncate"><strong>Result:</strong> {record.testResult || 'N/A'}</p>
+                                        <p><strong>Diagnosis:</strong> {record.diagnosis || 'N/A'}</p>
+                                        <p className="truncate"><strong>Treatment:</strong> {record.treatment || 'N/A'}</p>
+                                    </td>
+                                    <td className="px-4 py-4 max-w-sm">
                                         <p className="truncate"><strong>Prescription:</strong> {record.prescribedMedicine || 'N/A'}</p>
                                         <p className="pt-1 mt-1 border-t border-gray-200 truncate"><strong>Notes:</strong> {record.notes || 'N/A'}</p>
                                     </td>
