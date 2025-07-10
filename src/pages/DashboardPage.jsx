@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
-import { Calendar, User, PawPrint, DollarSign, PlusCircle } from 'lucide-react';
+
+import { Calendar, User, PawPrint, DollarSign, PlusCircle, Clock } from 'lucide-react';
 import PetSpeciesPieChart from '../components/PetSpeciesPieChart';
 
 export default function DashboardPage({ stats, allAppointments, owners, allPets, navigateTo }) {
@@ -75,22 +76,40 @@ export default function DashboardPage({ stats, allAppointments, owners, allPets,
                     </div>
                 </div>
                 <div className="lg:col-span-1 bg-white p-6 rounded-2xl shadow-sm border">
-                    <h2 className="text-xl font-bold text-gray-800 mb-4">Today's Appointments</h2>
-                    {todaysAppointments.length > 0 ? (
-                        <ul className="space-y-3">
-                            {todaysAppointments.map(app => {
-                                const { owner, pet } = getDetails(app);
-                                return (
-                                    <li key={app.id} className="p-3 bg-gray-50 rounded-lg">
-                                        <p className="font-semibold text-gray-700">{app.reason}</p>
-                                        <p className="text-sm text-gray-500">{pet?.name || 'N/A'} with {owner?.firstName || 'N/A'}</p>
-                                        <p className="text-sm font-bold text-cyan-600">{new Date(app.dateTime).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})}</p>
-                                    </li>
-                                );
-                            })}
-                        </ul>
-                    ) : (<p className="text-center text-gray-500 py-4">No appointments scheduled for today.</p>)}
-                </div>
+    <h2 className="text-xl font-bold text-gray-800 mb-4">Today's Appointments</h2>
+    {todaysAppointments.length > 0 ? (
+        <ul className="space-y-2">
+            {todaysAppointments.map(app => {
+                const { owner, pet } = getDetails(app);
+                return (
+                    <li 
+                        key={app.id} 
+                        className="flex items-center space-x-4 p-3 rounded-lg transition-colors hover:bg-gray-100 cursor-pointer"
+                        onClick={() => navigateTo('petDetails', pet)}
+                    >
+                        <img 
+                            src={pet?.imageUrl || `https://placehold.co/40x40/06b6d4/ffffff?text=${pet?.name.charAt(0)}`} 
+                            alt={pet?.name} 
+                            className="w-10 h-10 rounded-full object-cover flex-shrink-0"
+                        />
+                        <div className="flex-grow">
+                            <p className="font-semibold text-gray-800">{app.reason}</p>
+                            <p className="text-sm text-gray-500">
+                                <span className="font-medium text-gray-600">{pet?.name || 'N/A'}</span> (Owner: {owner?.firstName || 'N/A'})
+                            </p>
+                        </div>
+                        <div className="flex items-center space-x-1 text-cyan-600">
+                            <Clock size={16} />
+                            <span className="font-bold text-sm">
+                                {new Date(app.dateTime).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})}
+                            </span>
+                        </div>
+                    </li>
+                );
+            })}
+        </ul>
+    ) : (<p className="text-center text-gray-500 py-4">No appointments scheduled for today.</p>)}
+</div>
             </div>
         </div>
     );
