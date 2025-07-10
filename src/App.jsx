@@ -341,7 +341,7 @@ export default function App() {
             case 'editOwner':
                 return <EditOwnerPage owner={selectedOwner} db={db} setView={navigateTo} setError={setError} />;
             case 'ownerDetails':
-                 return <OwnerDetailsPage owner={selectedOwner} pets={ownerPets} handleSelectPet={navigateTo} navigateTo={navigateTo} setError={setError} db={db} />;
+                 return <OwnerDetailsPage owner={selectedOwner} pets={ownerPets} handleSelectPet={navigateTo} navigateTo={navigateTo} setError={setError} db={db} userId={userId}  />;
             case 'addPet':
                 return <AddPetPage owner={selectedOwner} db={db} userId={userId} setView={navigateTo} setError={setError} />;
             case 'editPet':
