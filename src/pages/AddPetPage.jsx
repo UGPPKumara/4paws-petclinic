@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { supabase } from '../supabaseClient'; // Make sure this path is correct
 import FormWrapper from '../components/FormWrapper';
 import InputField from '../components/InputField';
 import { UploadCloud } from 'lucide-react';
@@ -10,7 +11,9 @@ export default function AddPetPage({ owner, db, userId, setView, setError }) {
     const [breed, setBreed] = useState('');
     const [age, setAge] = useState('');
     const [gender, setGender] = useState('Male');
-    const [imageName, setImageName] = useState('');
+    
+    // This state now holds the file object for uploading
+    const [imageFile, setImageFile] = useState(null); 
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const handleSubmit = async (e) => {
@@ -18,18 +21,51 @@ export default function AddPetPage({ owner, db, userId, setView, setError }) {
         if (!name || !species) { setError('Name and Species are required.'); return; }
         setIsSubmitting(true);
         setError('');
+
         try {
-            const imageUrl = `https://placehold.co/400x400/06b6d4/ffffff?text=${name.charAt(0)}`;
+            // Default placeholder image
+            let imageUrl = `https://placehold.co/400x400/06b6d4/ffffff?text=${name.charAt(0)}`;
+
+            // --- Start of Supabase Upload Logic ---
+            if (imageFile) {
+                // 1. Create a unique file path to avoid overwriting files
+                const filePath = `${userId}/${Date.now()}-${imageFile.name}`;
+
+                // 2. Upload the file to your Supabase bucket
+                const { error: uploadError } = await supabase.storage
+                    .from('petimages') // Correct bucket name
+                    .upload(filePath, imageFile);
+
+                if (uploadError) {
+                    // If upload fails, stop and show the error
+                    throw uploadError;
+                }
+
+                // 3. Get the public URL of the uploaded file
+                const { data } = supabase.storage
+                    .from('petimages') // Correct bucket name
+                    .getPublicUrl(filePath);
+                
+                // Set imageUrl to the new Supabase URL
+                imageUrl = data.publicUrl;
+            }
+            // --- End of Supabase Upload Logic ---
 
             await addDoc(collection(db, `artifacts/default-pet-clinic/public/data/pets`), { 
                 name, species, breed, age, gender, 
-                imageUrl,
-                ownerId: owner.id, userId, createdAt: serverTimestamp() 
+                imageUrl, // This will be the Supabase URL if an image was uploaded
+                ownerId: owner.id, 
+                userId, 
+                createdAt: serverTimestamp() 
             });
+
             setView('ownerDetails', owner);
         } catch (err) {
-            setError('Failed to add pet.');
-        } finally { setIsSubmitting(false); }
+            setError(`Failed to add pet. ${err.message}`);
+            console.error(err);
+        } finally { 
+            setIsSubmitting(false); 
+        }
     };
     
     return (
@@ -58,11 +94,12 @@ export default function AddPetPage({ owner, db, userId, setView, setError }) {
                             <div className="flex text-sm text-gray-600">
                                 <label htmlFor="pet-image-upload" className="relative cursor-pointer bg-white rounded-md font-medium text-cyan-600 hover:text-cyan-500 focus-within:outline-none">
                                     <span>Upload an image</span>
-                                    <input id="pet-image-upload" name="pet-image-upload" type="file" className="sr-only" onChange={(e) => setImageName(e.target.files[0]?.name)} accept="image/*" />
+                                    {/* ✅ CORRECTED LINE: This now sets the imageFile state */}
+                                    <input id="pet-image-upload" name="pet-image-upload" type="file" className="sr-only" onChange={(e) => setImageFile(e.target.files[0])} accept="image/*" />
                                 </label>
                             </div>
-                            <p className="text-xs text-gray-500">{imageName ? `Selected: ${imageName}` : 'PNG, JPG up to 10MB'}</p>
-                            <p className="text-xs text-yellow-600">(Note: File upload is simulated.)</p>
+                            {/* This now correctly displays the name of the selected file */}
+                            <p className="text-xs text-gray-500">{imageFile ? `Selected: ${imageFile.name}` : 'PNG, JPG up to 10MB'}</p>
                         </div>
                     </div>
                 </div>

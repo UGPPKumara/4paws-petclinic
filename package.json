@@ -11,6 +11,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.50.4",
     "@tailwindcss/postcss": "^4.1.11",
     "firebase": "^11.9.1",
     "lucide-react": "^0.523.0",
