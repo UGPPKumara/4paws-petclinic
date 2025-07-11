@@ -25,7 +25,7 @@ export default function LoginPage({ auth, setError, error, navigateTo }) {
     };
 
     return (
-        <div className="flex items-center justify-center min-h-screen bg-gray-100 p-4">
+        <div className="flex items-center justify-center h-screen bg-gray-100 p-4 overflow-hidden">
             <div className="w-full max-w-sm mx-auto p-8 space-y-6 bg-white rounded-2xl shadow-xl">
                 <div className="flex flex-col items-center">
                     <Logo className="text-gray-800" />

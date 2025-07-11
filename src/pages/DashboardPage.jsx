@@ -38,7 +38,7 @@ export default function DashboardPage({ stats, allAppointments, owners, allPets,
         { label: "Upcoming Appointments", value: stats.upcomingAppointments, icon: Calendar, color: 'cyan' },
         { label: "Total Owners", value: stats.owners, icon: User, color: 'red' },
         { label: "Total Pets", value: stats.pets, icon: PawPrint, color: 'cyan' },
-        { label: "Total Payments", value: `$${stats.totalPayments.toFixed(2)}`, icon: DollarSign, color: 'red' },
+        { label: "Total Payments", value: `Rs. ${stats.totalPayments.toFixed(2)}`, icon: DollarSign, color: 'red' },
     ];
     const colorClasses = {
         cyan: { border: 'border-cyan-500', bg: 'bg-cyan-50', text: 'text-cyan-600' },
