@@ -5,6 +5,8 @@ import {
     signInWithEmailAndPassword,
     onAuthStateChanged,
     signOut,
+    sendPasswordResetEmail,
+    confirmPasswordReset
 } from 'firebase/auth';
 import { 
     getFirestore, 
@@ -42,6 +44,8 @@ import PetDetailsPage from './pages/PetDetailsPage';
 import AddMedicalRecordPage from './pages/AddMedicalRecordPage';
 import EditMedicalRecordPage from './pages/EditMedicalRecordPage';
 import LoginPage from './pages/LoginPage';
+import ForgotPasswordPage from './pages/ForgotPasswordPage';
+import ResetPasswordPage from './pages/ResetPasswordPage';
 
 
 // --- Firebase Configuration ---
@@ -58,7 +62,7 @@ const firebaseConfig =
 const appId = 'default-pet-clinic';
 
 export default function App() {
-    const [view, setView] = useState('dashboard');
+    const [view, setView] = useState('login');
     const [owners, setOwners] = useState([]);
     const [allPets, setAllPets] = useState([]);
     const [allMedicalRecords, setAllMedicalRecords] = useState([]);
@@ -124,9 +128,11 @@ export default function App() {
                 if (user) {
                     setUserId(user.uid);
                     setIsLoggedIn(true);
+                    setView('dashboard');
                 } else {
                     setUserId(null);
                     setIsLoggedIn(false);
+                    setView('login');
                 }
                 setAuthLoading(false);
             });
@@ -208,7 +214,7 @@ export default function App() {
     const handleLogout = async () => {
         if (auth) {
             await signOut(auth);
-            setView('dashboard');
+            setView('login');
             setSelectedOwner(null);
             setSelectedPet(null);
             setSelectedAppointment(null);
@@ -344,7 +350,7 @@ export default function App() {
                 break;
             }
             default:
-                if (['dashboard', 'owners', 'appointments', 'quickRegister'].includes(newView)) {
+                if (['dashboard', 'owners', 'appointments', 'quickRegister', 'login', 'forgotPassword', 'resetPassword'].includes(newView)) {
                     setSelectedOwner(null);
                     setSelectedPet(null);
                     setSelectedAppointment(null);
@@ -359,6 +365,20 @@ export default function App() {
     };
     
     const renderView = () => {
+        if (authLoading) return <LoadingSpinner message="Initializing..." />;
+
+        if (!isLoggedIn) {
+            switch (view) {
+                case 'forgotPassword':
+                    return <ForgotPasswordPage auth={auth} setError={setError} error={error} navigateTo={navigateTo} sendPasswordResetEmail={sendPasswordResetEmail}/>;
+                case 'resetPassword':
+                    return <ResetPasswordPage auth={auth} setError={setError} error={error} navigateTo={navigateTo} confirmPasswordReset={confirmPasswordReset}/>;
+                case 'login':
+                default:
+                    return <LoginPage auth={auth} setError={setError} error={error} navigateTo={navigateTo} />;
+            }
+        }
+        
         if (loading) return <LoadingSpinner />;
         if (error) return <ErrorMessage message={error.toString()} />;
 
@@ -398,19 +418,16 @@ export default function App() {
     if (authLoading) {
         return <div className="h-screen w-screen flex justify-center items-center bg-gray-50"><LoadingSpinner message="Initializing..." /></div>;
     }
-    if (!isLoggedIn) {
-        return <LoginPage auth={auth} setError={setError} error={error}/>
-    }
 
     return (
         <div className="bg-gray-50 h-screen font-sans flex overflow-hidden">
-            <Sidebar 
+           {isLoggedIn && <Sidebar 
                 isOpen={isSidebarOpen} 
                 navigateTo={navigateTo} 
                 currentView={view} 
                 handleLogout={handleLogout}
                 openBackupModal={() => setIsBackupModalOpen(true)}
-            />
+            />}
             {isBackupModalOpen && (
                 <BackupOptionsModal
                     isOpen={isBackupModalOpen}
@@ -421,7 +438,7 @@ export default function App() {
                 />
             )}
             <div className="flex-1 flex flex-col min-w-0">
-                <Header onMenuClick={() => setSidebarOpen(!isSidebarOpen)} owners={owners} allPets={allPets} navigateTo={navigateTo} />
+                {isLoggedIn && <Header onMenuClick={() => setSidebarOpen(!isSidebarOpen)} owners={owners} allPets={allPets} navigateTo={navigateTo} />}
                 <main className="p-4 sm:p-6 lg:p-8 flex-1 overflow-y-auto">
                     {renderView()}
                 </main>

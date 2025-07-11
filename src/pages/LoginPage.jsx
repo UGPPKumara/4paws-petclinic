@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import Logo from '../components/Logo';
 import InputField from '../components/InputField';
+import { Link } from 'react-router-dom';
 
-export default function LoginPage({ auth, setError, error }) {
+export default function LoginPage({ auth, setError, error, navigateTo }) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -50,6 +51,11 @@ export default function LoginPage({ auth, setError, error }) {
                         required 
                         placeholder="••••••••"
                     />
+                     <div className="text-sm text-right">
+                        <a href="#" onClick={() => navigateTo('forgotPassword')} className="font-medium text-cyan-600 hover:text-cyan-500">
+                            Forgot Password?
+                        </a>
+                    </div>
                     
                     <div>
                         <button 
