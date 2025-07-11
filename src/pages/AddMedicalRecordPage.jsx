@@ -113,7 +113,7 @@ export default function AddMedicalRecordPage({ pet, owner, db, userId, setError,
             <form onSubmit={handleSubmit} className="space-y-4">
                  <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
                     <InputField label="Date of Record" type="date" value={recordDate} onChange={e => setRecordDate(e.target.value)} required />
-                    <InputField label="Payment Amount ($)" type="number" value={payment} onChange={e => setPayment(e.target.value)} placeholder="0.00" />
+                    <InputField label="Diagnosis" type="text" value={diagnosis} onChange={e => setDiagnosis(e.target.value)} placeholder="e.g., Allergic reaction" className="md:col-span-2" />
                     <div className="md:col-span-2">
                         <label className="block text-sm font-medium text-gray-700 mb-1.5">Diagnostic Test</label>
                         <InputField type="select" value={diagnosticTest} onChange={e => setDiagnosticTest(e.target.value)} noLabel>
@@ -122,7 +122,6 @@ export default function AddMedicalRecordPage({ pet, owner, db, userId, setError,
                         </InputField>
                     </div>
                     <InputField label="Test Result" type="textarea" value={testResult} onChange={e => setTestResult(e.target.value)} placeholder="Enter test results" className="md:col-span-2" />
-                    <InputField label="Diagnosis" type="textarea" value={diagnosis} onChange={e => setDiagnosis(e.target.value)} placeholder="e.g., Allergic reaction" className="md:col-span-2" />
                     <InputField label="Treatment" type="textarea" value={treatment} onChange={e => setTreatment(e.target.value)} placeholder="e.g., Administered antihistamine" className="md:col-span-2" />
                     <InputField label="Prescribed Medicine" type="textarea" value={prescribedMedicine} onChange={e => setPrescribedMedicine(e.target.value)} placeholder="e.g., Amoxicillin 250mg, 1 tablet twice a day for 7 days" className="md:col-span-2" />
                     <InputField label="General Notes" type="textarea" value={notes} onChange={e => setNotes(e.target.value)} placeholder="Add any general notes about the visit..." className="md:col-span-2" />
@@ -134,6 +133,7 @@ export default function AddMedicalRecordPage({ pet, owner, db, userId, setError,
                              <InputField type="time" value={followUpTime} onChange={e => setFollowUpTime(e.target.value)} noLabel />
                         </div>
                     </div>
+                    <InputField label="Payment Amount ($)" type="number" value={payment} onChange={e => setPayment(e.target.value)} placeholder="0.00" />
                     <div className="md:col-span-2">
                         <label className="block text-sm font-medium text-gray-700 mb-1.5">Upload Report (Optional)</label>
                         <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
