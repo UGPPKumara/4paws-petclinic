@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import emailjs from '@emailjs/browser';
 import FormWrapper from '../components/FormWrapper';
 import InputField from '../components/InputField';
 
@@ -32,9 +33,32 @@ export default function AddAppointmentPage({ db, userId, owners, allPets, setVie
                 userId, 
                 createdAt: serverTimestamp() 
             });
+
+            // Send confirmation email
+            const owner = owners.find(o => o.id === selectedOwnerId);
+            const pet = allPets.find(p => p.id === selectedPetId);
+
+            if (owner && pet && owner.email) {
+                const templateParams = {
+                    owner_name: `${owner.firstName} ${owner.lastName}`,
+                    owner_email: owner.email,
+                    pet_name: pet.name,
+                    appointment_date: new Date(date).toLocaleDateString(),
+                    appointment_time: time,
+                    reason: reason,
+                };
+
+                await emailjs.send(
+                    'service_u6fytgq', // Replace with your EmailJS Service ID
+                    'template_idyrnk3', // Replace with your EmailJS Template ID
+                    templateParams,
+                    'hUE2q-nFU-UDEZhby' // Replace with your EmailJS Public Key
+                );
+            }
+
             setView('appointments');
         } catch (err) {
-            setError('Failed to add appointment.');
+            setError(`Failed to add appointment. ${err.message}`);
         } finally {
             setIsSubmitting(false);
         }

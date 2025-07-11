@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { doc, updateDoc } from 'firebase/firestore';
+import emailjs from '@emailjs/browser';
 import FormWrapper from '../components/FormWrapper';
 import InputField from '../components/InputField';
 
@@ -26,6 +27,38 @@ export default function EditAppointmentPage({ appointment, db, owners, allPets, 
             const dateTime = new Date(`${date}T${time}`);
             const appointmentRef = doc(db, `artifacts/default-pet-clinic/public/data/appointments`, appointment.id);
             await updateDoc(appointmentRef, { ownerId: selectedOwnerId, petId: selectedPetId, dateTime, reason, status });
+
+            // Send email based on status
+            const owner = owners.find(o => o.id === selectedOwnerId);
+            const pet = allPets.find(p => p.id === selectedPetId);
+
+            if (owner && pet && owner.email) {
+                const templateParams = {
+                    owner_name: `${owner.firstName} ${owner.lastName}`,
+                    owner_email: owner.email,
+                    pet_name: pet.name,
+                    appointment_date: new Date(date).toLocaleDateString(),
+                    appointment_time: time,
+                    reason: reason,
+                };
+                
+                let templateId = '';
+                if (status === 'Completed' && appointment.status !== 'Completed') {
+                    templateId = 'YOUR_COMPLETED_TEMPLATE_ID'; // Replace with your "Completed" template ID
+                } else if (status === 'Canceled' && appointment.status !== 'Canceled') {
+                    templateId = 'template_kzeizsm'; // Replace with your "Canceled" template ID
+                }
+
+                if (templateId) {
+                    await emailjs.send(
+                        'service_u6fytgq', // Replace with your EmailJS Service ID
+                        templateId,
+                        templateParams,
+                        'hUE2q-nFU-UDEZhby' // Replace with your EmailJS Public Key
+                    );
+                }
+            }
+
             setView('appointments');
         } catch (err) {
             console.error(err)
