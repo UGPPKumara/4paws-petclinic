@@ -133,7 +133,7 @@ export default function AddMedicalRecordPage({ pet, owner, db, userId, setError,
                              <InputField type="time" value={followUpTime} onChange={e => setFollowUpTime(e.target.value)} noLabel />
                         </div>
                     </div>
-                    <InputField label="Payment Amount ($)" type="number" value={payment} onChange={e => setPayment(e.target.value)} placeholder="0.00" />
+                    <InputField label="Payment Amount (Rs.)" type="number" value={payment} onChange={e => setPayment(e.target.value)} placeholder="0.00" />
                     <div className="md:col-span-2">
                         <label className="block text-sm font-medium text-gray-700 mb-1.5">Upload Report (Optional)</label>
                         <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
@@ -151,7 +151,7 @@ export default function AddMedicalRecordPage({ pet, owner, db, userId, setError,
                         </div>
                     </div>
                 </div>
-                <button type="submit" disabled={isSubmitting} className={`w-full text-white font-bold py-2.5 px-4 rounded-lg shadow-md transition-colors disabled:opacity-50 bg-cyan-600 hover:bg-cyan-700 mt-6`}>
+                <button type="submit" disabled={isSubmitting} className={`w-full text-white font-bold py-2.5 px-4 rounded-lg shadow-md transition-colors disabled:opacity-50  bg-cyan-700 hover:bg-cyan-500 mt-6`}>
                     {isSubmitting ? 'Saving...' : 'Add Record'}
                 </button>
             </form>

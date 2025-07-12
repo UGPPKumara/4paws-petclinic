@@ -29,7 +29,7 @@ export default function LoginPage({ auth, setError, error, navigateTo }) {
             <div className="w-full max-w-sm mx-auto p-8 space-y-6 bg-white rounded-2xl shadow-xl">
                 <div className="flex flex-col items-center">
                     <Logo className="text-gray-800" />
-                    <h1 className="text-2xl font-bold text-gray-800 mt-4">Admin Login</h1>
+                    <h1 className="text-2xl font-bold text-gray-800 mt-4">Clinic Admin Login</h1>
                 </div>
 
                 <form className="mt-6 space-y-6" onSubmit={handleLogin}>
@@ -41,7 +41,7 @@ export default function LoginPage({ auth, setError, error, navigateTo }) {
                         value={email} 
                         onChange={e => setEmail(e.target.value)} 
                         required 
-                        placeholder="admin@clinic.com" 
+                        placeholder="Enter your email" 
                     />
                     <InputField 
                         label="Password" 
@@ -49,7 +49,7 @@ export default function LoginPage({ auth, setError, error, navigateTo }) {
                         value={password} 
                         onChange={e => setPassword(e.target.value)} 
                         required 
-                        placeholder="••••••••"
+                        placeholder="Enter you password"
                     />
                      <div className="text-sm text-right">
                         <a href="#" onClick={() => navigateTo('forgotPassword')} className="font-medium text-cyan-600 hover:text-cyan-500">
@@ -61,7 +61,7 @@ export default function LoginPage({ auth, setError, error, navigateTo }) {
                         <button 
                             type="submit" 
                             disabled={isSubmitting} 
-                            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-500 hover:bg-cyan-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-500 disabled:bg-cyan-300 transition-colors"
+                            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-cyan-700 hover:bg-cyan-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-300 disabled:bg-cyan-900 transition-colors"
                         >
                             {isSubmitting ? 'Signing in...' : 'Sign in'}
                         </button>

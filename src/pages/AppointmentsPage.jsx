@@ -34,7 +34,7 @@ export default function AppointmentsPage({ appointments, owners, pets, navigateT
             )}
             <div className="flex flex-col md:flex-row justify-between md:items-center mb-8 gap-4">
                 <h1 className="text-4xl font-bold text-gray-800 flex items-center"><Calendar className="mr-3"/>Appointments</h1>
-                <button onClick={() => navigateTo('addAppointment')} className="flex items-center justify-center bg-cyan-600 text-white font-bold py-2.5 px-5 rounded-lg shadow-md hover:bg-cyan-700 transition-colors">
+                <button onClick={() => navigateTo('addAppointment')} className="flex items-center justify-center bg-green-700 text-white font-bold py-2.5 px-5 rounded-lg shadow-md hover:bg-green-500 transition-colors">
                     <PlusCircle className="mr-2" size={20} />
                     Schedule Appointment
                 </button>

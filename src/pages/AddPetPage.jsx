@@ -94,7 +94,7 @@ export default function AddPetPage({ owner, db, userId, setView, setError }) {
                         </div>
                     </div>
                 </div>
-                <button type="submit" disabled={isSubmitting} className="w-full text-white font-bold py-3 px-4 rounded-lg shadow-md transition-colors disabled:opacity-50 bg-green-500 hover:bg-green-600">
+                <button type="submit" disabled={isSubmitting} className="w-full text-white font-bold py-3 px-4 rounded-lg shadow-md transition-colors disabled:opacity-50 bg-cyan-700 hover:bg-cyan-500">
                     {isSubmitting ? 'Saving...' : 'Save Pet'}
                 </button>
             </form>

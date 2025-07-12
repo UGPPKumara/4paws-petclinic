@@ -89,7 +89,7 @@ export default function EditAppointmentPage({ appointment, db, owners, allPets, 
                     <option>Completed</option>
                     <option>Canceled</option>
                 </InputField>
-                <button type="submit" disabled={isSubmitting} className="w-full text-white font-bold py-3 px-4 rounded-lg shadow-md transition-colors disabled:opacity-50 bg-cyan-600 hover:bg-cyan-700">
+                <button type="submit" disabled={isSubmitting} className="w-full text-white font-bold py-3 px-4 rounded-lg shadow-md transition-colors disabled:opacity-50  bg-cyan-700 hover:bg-cyan-500">
                     {isSubmitting ? 'Updating...' : 'Update Appointment'}
                 </button>
             </form>

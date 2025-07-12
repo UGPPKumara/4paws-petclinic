@@ -80,7 +80,7 @@ export default function AddAppointmentPage({ db, userId, owners, allPets, setVie
                     <InputField label="Time" type="time" value={time} onChange={e => setTime(e.target.value)} required />
                 </div>
                 <InputField label="Reason for Visit" type="text" value={reason} onChange={e => setReason(e.target.value)} required />
-                <button type="submit" disabled={isSubmitting} className="w-full text-white font-bold py-3 px-4 rounded-lg shadow-md transition-colors disabled:opacity-50 bg-cyan-600 hover:bg-cyan-700">
+                <button type="submit" disabled={isSubmitting} className="w-full text-white font-bold py-3 px-4 rounded-lg shadow-md transition-colors disabled:opacity-50  bg-cyan-700 hover:bg-cyan-500">
                     {isSubmitting ? 'Saving...' : 'Schedule Appointment'}
                 </button>
             </form>

@@ -8,7 +8,7 @@ export default function PetSpeciesPieChart({ data }) {
     const total = data.reduce((acc, entry) => acc + entry.value, 0);
     let cumulativePercentage = 0;
 
-    const COLORS = ['#06b6d4', '#ec4899', '#8b5cf6', '#f59e0b', '#10b981', '#64748b'];
+    const COLORS = ['#8FEA5F', '#01398A', '#FFE16A', '#f59e0b', '#004252', '#64748b'];
 
     return (
         <div className="flex flex-col md:flex-row items-center justify-center gap-6 p-4">

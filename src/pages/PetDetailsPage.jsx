@@ -52,7 +52,7 @@ export default function PetDetailsPage({ pet, owner, records, db, userId, handle
 
             <div className="flex justify-between items-center mb-4">
                 <h2 className="text-2xl font-semibold text-gray-700">Medical History</h2>
-                <button onClick={() => navigateTo('addMedicalRecord', pet)} className="flex items-center justify-center bg-cyan-600 text-white font-bold py-2 px-4 rounded-lg shadow-md hover:bg-cyan-700 transition-colors">
+                <button onClick={() => navigateTo('addMedicalRecord', pet)} className="flex items-center justify-center bg-green-700 text-white font-bold py-2 px-4 rounded-lg shadow-md hover:bg-green-500 transition-colors">
                     <PlusCircle className="mr-2" size={20} /> Add Record
                 </button>
             </div>

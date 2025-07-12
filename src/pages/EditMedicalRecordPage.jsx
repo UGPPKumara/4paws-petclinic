@@ -120,7 +120,7 @@ export default function EditMedicalRecordPage({ record, pet, owner, db, userId, 
                     </div>
                 </div>
 
-                <button type="submit" disabled={isSubmitting} className={`w-full text-white font-bold py-2.5 px-4 rounded-lg shadow-md transition-colors disabled:opacity-50 bg-cyan-600 hover:bg-cyan-700 mt-6`}>
+                <button type="submit" disabled={isSubmitting} className={`w-full text-white font-bold py-2.5 px-4 rounded-lg shadow-md transition-colors disabled:opacity-50 bg-cyan-700 hover:bg-cyan-500 mt-6`}>
                     {isSubmitting ? 'Updating...' : 'Update Record'}
                 </button>
             </form>

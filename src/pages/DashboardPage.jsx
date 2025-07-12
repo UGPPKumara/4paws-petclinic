@@ -49,7 +49,7 @@ export default function DashboardPage({ stats, allAppointments, owners, allPets,
         <div className="max-w-7xl mx-auto">
             <div className="flex flex-col md:flex-row justify-between md:items-center mb-8 gap-4">
                 <h1 className="text-4xl font-bold text-gray-800">Dashboard</h1>
-                <button onClick={() => navigateTo('quickRegister')} className="flex items-center justify-center bg-green-500 text-white font-bold py-2.5 px-5 rounded-lg shadow-md hover:bg-green-600 transition-colors">
+                <button onClick={() => navigateTo('quickRegister')} className="flex items-center justify-center bg-green-700 text-white font-bold py-2.5 px-5 rounded-lg shadow-md hover:bg-green-500 transition-colors">
                     <PlusCircle className="mr-2" size={20} />
                     Quick Register
                 </button>

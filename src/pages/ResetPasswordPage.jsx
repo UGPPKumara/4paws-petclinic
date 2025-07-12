@@ -77,7 +77,7 @@ export default function ResetPasswordPage({ auth, setError, error, navigateTo, c
                             <button 
                                 type="submit" 
                                 disabled={isSubmitting || !oobCode} 
-                                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-500 hover:bg-cyan-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-500 disabled:bg-cyan-300 transition-colors"
+                                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white  bg-cyan-700 hover:bg-cyan-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-300 disabled:bg-cyan-900 transition-colors"
                             >
                                 {isSubmitting ? 'Resetting...' : 'Reset Password'}
                             </button>

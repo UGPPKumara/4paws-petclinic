@@ -63,7 +63,7 @@ export default function HomePage({ owners, handleSelectOwner, navigateTo, db, al
                 <div className="flex-grow md:flex-grow-0 md:w-72">
                     <InputField type="text" placeholder="Search by name..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} noLabel />
                 </div>
-                <button onClick={() => navigateTo('addOwner')} className="w-full md:w-auto flex items-center justify-center bg-cyan-600 text-white font-bold py-2.5 px-5 rounded-lg shadow-md hover:bg-cyan-700 transition-colors">
+                <button onClick={() => navigateTo('addOwner')} className="w-full md:w-auto flex items-center justify-center bg-green-700 text-white font-bold py-2.5 px-5 rounded-lg shadow-md hover:bg-green-500 transition-colors">
                     <PlusCircle className="mr-2" size={20} /> Add Owner
                 </button>
             </div>

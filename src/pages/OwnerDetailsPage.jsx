@@ -95,7 +95,7 @@ export default function OwnerDetailsPage({ owner, pets, handleSelectPet, navigat
                         noLabel 
                     />
                 </div>
-                <button onClick={() => navigateTo('addPet', owner)} className="w-full md:w-auto flex items-center justify-center bg-green-500 text-white font-bold py-2 px-4 rounded-lg shadow-md hover:bg-green-600 transition-colors">
+                <button onClick={() => navigateTo('addPet', owner)} className="w-full md:w-auto flex items-center justify-center bg-green-700 text-white font-bold py-2 px-4 rounded-lg shadow-md hover:bg-green-500 transition-colors">
                     <PlusCircle className="mr-2" size={20} /> Add Pet
                 </button>
             </div>
